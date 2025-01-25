@@ -23,27 +23,20 @@ function App() {
   }>();
 
   useEffect(() => {
-    // 현재 시간 가져오기 (한국 시간으로 변환)
     const currentTime = dayjs().tz(KOREA_TIMEZONE);
-
-    // 개척 시간(dayjs 객체로 변환)
     const creationTime = dayjs(currentGuildTime).tz(KOREA_TIMEZONE);
-
-    // 1주기의 시간: 150분 (밀리초로 변환)
-    const cycleTime = 150 * 60 * 1000;
 
     // 시간 차이 계산 (밀리초 단위)
     const timeDifference = currentTime.valueOf() - creationTime.valueOf();
 
     // 몇 주기인지 계산
-    const cycleNumber = Math.ceil(Math.abs(timeDifference) / cycleTime);
+    const cycleNumber = Math.ceil(
+      Math.abs(timeDifference) / BUILD_TIME_INTERVAL_IN_MINUTE
+    );
 
-    // // 미래인지 과거인지 판단
     if (timeDifference < 0) {
-      console.log(`현재는 개척시간으로부터 ${cycleNumber}주기 전입니다.`);
       setCurrentCycle({ cycle: cycleNumber, isFuture: false });
     } else {
-      console.log(`현재는 개척시간으로부터 ${cycleNumber}주기 후입니다.`);
       setCurrentCycle({ cycle: cycleNumber, isFuture: true });
     }
 
@@ -56,12 +49,13 @@ function App() {
     if (!cityCreationTime) return;
 
     const creationTime = new Date(cityCreationTime);
-    const cycleTime = BUILD_TIME_INTERVAL_IN_MINUTE;
 
     const ranges = [];
 
     for (let i = -5; i <= 5; i++) {
-      const cycleDate = new Date(creationTime.getTime() + i * cycleTime);
+      const cycleDate = new Date(
+        creationTime.getTime() + i * BUILD_TIME_INTERVAL_IN_MINUTE
+      );
       ranges.push({ cycle: i, time: cycleDate.toISOString() });
     }
 
