@@ -13,14 +13,21 @@ const BUILD_TIME_INTERVAL_IN_MINUTE = 150 * 60 * 1000; // 150분
 const KOREA_TIMEZONE = "Asia/Seoul";
 
 function App() {
-  const [currentGuildTime, setCurrentGuildTime] = useState<
-    string | undefined
-  >();
+  const [currentGuildTime, setCurrentGuildTime] = useState<string | undefined>(
+    ""
+  );
   const [ranges, setRanges] = useState<{ cycle: number; time: string }[]>();
   const [currentCycle, setCurrentCycle] = useState<{
     cycle: number;
     isFuture: boolean;
   }>();
+
+  useEffect(() => {
+    const savedGuildTime = localStorage.getItem("guild-time");
+    if (savedGuildTime) {
+      setCurrentGuildTime(savedGuildTime);
+    }
+  }, []);
 
   useEffect(() => {
     const currentTime = dayjs().tz(KOREA_TIMEZONE);
@@ -37,6 +44,7 @@ function App() {
     setCurrentCycle({ cycle: cycleNumber, isFuture: timeDifference < 0 });
 
     if (currentGuildTime) {
+      updateLocalStorage(currentGuildTime);
       getCycleTimeRanges(currentGuildTime);
     }
   }, [currentGuildTime]);
@@ -58,6 +66,10 @@ function App() {
     setRanges(ranges);
   };
 
+  const updateLocalStorage = (value: string) => {
+    localStorage.setItem("guild-time", value);
+  };
+
   return (
     <div className="App">
       <h1>대항해시대 길드 개척지 시간 계산기</h1>
@@ -66,6 +78,7 @@ function App() {
       <p>길드 개척 시간 (개척시간을 입력해주세요) </p>
       <input
         type="datetime-local"
+        value={currentGuildTime}
         onChange={(e) => {
           setCurrentGuildTime(e.target.value);
         }}
