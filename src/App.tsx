@@ -34,11 +34,7 @@ function App() {
       Math.abs(timeDifference) / BUILD_TIME_INTERVAL_IN_MINUTE
     );
 
-    if (timeDifference < 0) {
-      setCurrentCycle({ cycle: cycleNumber, isFuture: false });
-    } else {
-      setCurrentCycle({ cycle: cycleNumber, isFuture: true });
-    }
+    setCurrentCycle({ cycle: cycleNumber, isFuture: timeDifference < 0 });
 
     if (currentGuildTime) {
       getCycleTimeRanges(currentGuildTime);
